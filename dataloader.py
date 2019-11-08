@@ -126,7 +126,7 @@ class CocoDataset(Dataset):
 class CSVDataset(Dataset):
     """CSV dataset."""
 
-    def __init__(self, train_file, class_list, transform=None):
+    def __init__(self, train_file, class_list, root_path=None, transform=None):
         """
         Args:
             train_file (string): CSV file with training annotations
@@ -135,6 +135,7 @@ class CSVDataset(Dataset):
         """
         self.train_file = train_file
         self.class_list = class_list
+        self.root_path = root_path
         self.transform = transform
 
         # parse the provided class file
@@ -258,6 +259,7 @@ class CSVDataset(Dataset):
 
             try:
                 img_file, x1, y1, x2, y2, class_name = row[:6]
+                img_file = self.root_path + img_file
             except ValueError:
                 raise_from(ValueError('line {}: format should be \'img_file,x1,y1,x2,y2,class_name\' or \'img_file,,,,,\''.format(line)), None)
 

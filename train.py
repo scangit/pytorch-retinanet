@@ -25,7 +25,7 @@ from torch.utils.data import Dataset, DataLoader
 import coco_eval
 import csv_eval
 
-assert torch.__version__.split('.')[1] == '4'
+#assert torch.__version__.split('.')[1] == '4'
 
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
@@ -39,6 +39,7 @@ def main(args=None):
 	parser.add_argument('--csv_train', help='Path to file containing training annotations (see readme)')
 	parser.add_argument('--csv_classes', help='Path to file containing class list (see readme)')
 	parser.add_argument('--csv_val', help='Path to file containing validation annotations (optional, see readme)')
+	parser.add_argument('--csv_root', help='Root Path of csv training/validation annotations (optional, see readme)')
 
 	parser.add_argument('--depth', help='Resnet depth, must be one of 18, 34, 50, 101, 152', type=int, default=50)
 	parser.add_argument('--epochs', help='Number of epochs', type=int, default=100)
@@ -63,13 +64,13 @@ def main(args=None):
 			raise ValueError('Must provide --csv_classes when training on COCO,')
 
 
-		dataset_train = CSVDataset(train_file=parser.csv_train, class_list=parser.csv_classes, transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
+		dataset_train = CSVDataset(train_file=parser.csv_train, class_list=parser.csv_classes, transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]), root_path=parser.csv_root)
 
 		if parser.csv_val is None:
 			dataset_val = None
 			print('No validation annotations provided.')
 		else:
-			dataset_val = CSVDataset(train_file=parser.csv_val, class_list=parser.csv_classes, transform=transforms.Compose([Normalizer(), Resizer()]))
+			dataset_val = CSVDataset(train_file=parser.csv_val, class_list=parser.csv_classes, transform=transforms.Compose([Normalizer(), Resizer()]), root_path=parser.csv_root)
 
 	else:
 		raise ValueError('Dataset type not understood (must be csv or coco), exiting.')
